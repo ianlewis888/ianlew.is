@@ -1,0 +1,106 @@
+/* Color Variables */
+$body-font: 'Merriweather', serif;
+$dark-blue: #2F4550;
+$medium-blue: #586F7C;
+$light-blue: #A0BFBD;
+$light-grey: #F4F4F9;
+$content-link-color: #7D8491;
+$hover-highlight-color: #DEE5DF;
+
+body {
+    font-family: $body-font;
+    margin: 0;
+    background-color: $dark-blue;
+}
+.nav {
+    font-size: 20px;
+    margin: 0px;
+    padding: 0px;
+    width: 20%;
+    color: white;
+    background-color: $medium-blue;
+    height: 100%; /* Full height */
+    position: fixed; /* Make it stick, even on scroll */
+    overflow: auto; /* Enable scrolling if the sidenav has too much content */
+    ul {
+      padding-top: 15px;
+      list-style-type: none;
+      a {
+        font-size: 24px;
+        border-radius: 3px;
+        text-decoration: none;
+        color: inherit;
+        padding-bottom: 8px;
+        border-bottom: solid;
+      }
+      li {
+        margin-top: 30px;
+      }
+      li > a {
+        font-size: inherit;
+        text-decoration: none;
+        color: inherit;
+        border-bottom: inherit;
+        border-radius: 3px;
+        padding: 10px;
+      }
+      li:first-of-type{
+        margin-top: 48px;
+      }
+      li > a:hover{
+        background-color: $light-blue;
+      }
+    }
+}
+.content {
+  color: $dark-blue;
+  background-color: $light-grey;
+  margin-left: 20%;
+  width: 80%;
+  position: fixed;
+  height:100%;
+  padding: 25px;
+  * {
+    margin-left: 25px;
+  }
+  a {
+    color: $content-link-color;
+    text-decoration: none;
+  }
+  a:hover {
+    background-color: $hover-highlight-color;
+  }
+}
+h1 {
+  margin-top: 25px;
+  font-size: 36pt;
+}
+@media screen and (max-width: 1200px) {
+  .nav > ul {
+    margin-left: -20px;
+  }
+}
+@media screen and (max-width: 1000px) {
+  .nav {
+    width: 100%;
+    height: 75px;
+    ul {
+      margin-top: 0px;
+      margin-left: -20px;
+      li {
+        display: none;
+      }
+    }
+  }
+  .content {
+    width: 100%;
+    position: absolute;
+    margin-top: 75px;
+    margin-left: 0;
+    padding: 0px;
+    * {
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+  }
+}
