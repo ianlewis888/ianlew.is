@@ -1,8 +1,5 @@
 <html>
-<title>Airplane Crash Map</title>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<link href="https://fonts.googleapis.com/css?family=Merriweather:400,700|Roboto:400,700" rel="stylesheet">
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
 <style>
     body {
       font-family: 'Merriweather', serif;
@@ -109,123 +106,114 @@
       color: #8F9199;
     }
 </style>
-<div id="nav-container">
-  <h2 id="title">World Map of Plane Crashes</h2>
-</div>
-<img src="loading.svg" id="loading-spinner">
-<div id="map-container"></div>
-<div id="description-container"></div>
-<script type="text/javascript">
-  d3.selection.prototype.moveToFront = function() {
-    return this.each(function(){
-      this.parentNode.appendChild(this);
-    });
-  };
-  var mapData = d3.json("custom.geo.json", createMap),
-    projection = d3.geoEquirectangular().scale(210).center([-50,20]),
-    menu = d3.select("body").append("div").attr("class","menu"),
-    searchButton = menu.append("i").attr("class", "fa fa-search fa-lg").attr("aria-hidden", "true"),
-    searchBox = menu.append("input").attr("id", "search-box").attr("type", "text").attr("placeholder", "Search"),
-    filterButton = menu.append("i").attr("class", "fa fa-filter fa-lg").attr("aria-hidden", "true");
-    closeButton = menu.append("i").attr("class", "fa fa-close fa-lg").attr("aria-hidden", "true").attr("id", "close-button");
 
-  searchButton.on("click", function(){
-    searchButton.style("display", "none");
-    filterButton.style("display", "none");
-    searchBox.style("display", "inline").node().focus();
-    closeButton.style("display", "inline");
-  });
 
-  closeButton.on("click", function(){
-    searchButton.style("display", "inline");
-    filterButton.style("display", "inline");
-    searchBox.style("display", "none");
-    closeButton.style("display", "none");
-  });
+<head>
+  <title>Airplane Crash Map</title>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://d3js.org/topojson.v1.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Merriweather:400,700|Roboto:400,700" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
 
-  function createMap(d) {
-    var mapData = d,
-      path = d3.geoPath(projection),
-      svg = d3.select("#map-container")
-          .append("svg")
-          .attr("width","100%")
-          .attr("height","100%"),
-      fillColor = "#E5E5E5",
-      strokeColor = "#8F9199";
 
-    svg.selectAll("path")
-      .data(mapData.features)
-      .enter()
-      .append("path")
-      .attr("d", path)
-      .attr("fill", fillColor)
-      .attr("stroke", strokeColor)
-      .attr("stroke-width", "0.5");
+<body>
 
-    var format = d3.timeParse("%B %d, %Y");
+  <div id="nav-container">
+    <h2 id="title">World Map of Plane Crashes</h2>
+  </div>
+  <img src="loading.svg" id="loading-spinner">
+  <div id="map-container"></div>
+  <div id="description-container"></div>
 
-    var crashData = d3.csv("Plane Crashes.csv", function(d) {
-      d['Date'] = format(d['Date']);
-      return d;
-    }, plot_points);
-  };
 
-  function plot_points(data) {
-    function checkA(d) {
-      if (d["Passengers Aboard"] !== "?" && ["Crew Aboard"] !== "?") {
-        return "<i> (Passengers: "+d["Passengers Aboard"]+", Crew: "+d["Crew Aboard"]+")</i>";
-      } else {
-        return "";
+  <script type="text/javascript">
+
+    /*--- Add moveToFront() Function to D3 ---*/
+
+    d3.selection.prototype.moveToFront = function() {
+      return this.each(function(){
+        this.parentNode.appendChild(this);
+      });
+    };
+
+    /*--- Initialize Map / Page Variables ---*/
+
+    var mapData = d3.json("world_map.json", createMap),
+      projection = d3.geoEquirectangular().scale(210).center([-50,20]),
+      menu = d3.select("body").append("div").attr("class","menu"),
+      searchButton = menu.append("i").attr("class", "fa fa-search fa-lg").attr("aria-hidden", "true"),
+      searchBox = menu.append("input").attr("id", "search-box").attr("type", "text").attr("placeholder", "Search"),
+      filterButton = menu.append("i").attr("class", "fa fa-filter fa-lg").attr("aria-hidden", "true");
+      closeButton = menu.append("i").attr("class", "fa fa-close fa-lg").attr("aria-hidden", "true").attr("id", "close-button");
+
+    /*--- Draws SVG From World Map TopoJson ---*/
+    function createMap(d) {
+      var mapData = topojson.feature(d, d.objects.countries),
+        path = d3.geoPath(projection),
+        svg = d3.select("#map-container")
+            .append("svg")
+            .attr("width","100%")
+            .attr("height","100%"),
+        fillColor = "#E5E5E5",
+        strokeColor = "#8F9199";
+
+      svg.selectAll("path")
+        .data(mapData.features)
+        .enter()
+        .append("path")
+        .attr("d", path)
+        .attr("fill", fillColor)
+        .attr("stroke", strokeColor)
+        .attr("stroke-width", "0.5");
+
+      var formatDate = d3.timeParse("%B %d, %Y");
+
+      var crashData = d3.csv("Plane Crashes.csv", function(d) {
+        d['Date'] = formatDate(d['Date']);
+        return d;
+      }, plot_points);
+    };
+
+    /*--- Adds Visual Representation of Crash Data ---*/
+    function plot_points(data) {
+
+    /*--- Define Functions ---*/
+
+      /*--- Draws Circles on Map ---*/
+      function draw_circles(circles) {
+        circles.attr("cx", function (d) { return projection([d.Longitude,d.Latitude])[0]; })
+        .attr("cy", function (d) { return projection([d.Longitude,d.Latitude])[1]; })
+        .attr("r","2")
+        .attr("fill","#4EA5D9")
+        .attr("stroke","black")
+        .attr("stroke-width", "0.5")
+        .on("mouseover", showTooltip)
+        .on("click", bindDescription)
+        .on("mouseout", hideTooltip);
       }
-    }
-    function checkF(d) {
-      if (d["Passenger Fatalities"] !== "?" && d["Crew Fatalities"] !== "?") {
-        return "<i> (Passengers: "+d["Passenger Fatalities"]+", Crew: "+d["Crew Fatalities"]+")</i>";
-      } else {
-        return "";
+
+      /*--- Checks For/Returns Passenger and Crew Count ---*/
+      function checkA(d) {
+        if (d["Passengers Aboard"] !== "?" && ["Crew Aboard"] !== "?") {
+          return "<i> (Passengers: "+d["Passengers Aboard"]+", Crew: "+d["Crew Aboard"]+")</i>";
+        } else {
+          return "";
+        }
       }
-    }
-    var svg = d3.select("svg"),
-      desc_container = d3.select("#description-container")
-      tip = d3.select("body").append("div")
-        .attr("class", "d3-tip")
-        .style("opacity", 0),
-      month = new Array();
-        month[0] = "January";
-        month[1] = "February";
-        month[2] = "March";
-        month[3] = "April";
-        month[4] = "May";
-        month[5] = "June";
-        month[6] = "July";
-        month[7] = "August";
-        month[8] = "September";
-        month[9] = "October";
-        month[10] = "November";
-        month[11] = "December";
 
-    svg.selectAll("circle")
-      .data(data)
-      .enter()
-      .append("circle")
-      .attr("cx", function (d) { return projection([d.Longitude,d.Latitude])[0]; })
-		  .attr("cy", function (d) { return projection([d.Longitude,d.Latitude])[1]; })
-      .attr("r","2")
-      .attr("fill","#4EA5D9")
-      .attr("stroke","black")
-      .attr("stroke-width", "0.5")
-      .on("mouseover", function(d){
-        tip.transition()
-          .duration(200)
-          .style("opacity", .9);
+      /*--- Checks For/Returns Passenger and Crew Fatality Count ---*/
+      function checkF(d) {
+        if (d["Passenger Fatalities"] !== "?" && d["Crew Fatalities"] !== "?") {
+          return "<i> (Passengers: "+d["Passenger Fatalities"]+", Crew: "+d["Crew Fatalities"]+")</i>";
+        } else {
+          return "";
+        }
+      }
 
-        tip.html(d.Location+" ("+month[d.Date.getMonth()]+" "+d.Date.getDate()+
-        ", "+d.Date.getFullYear()+")<br><br><i>Click for description</i>")
-          .style("left", (d3.event.pageX + 20) + "px")
-          .style("top", (d3.event.pageY - 23) + "px");
+      /*--- Checks For/Returns Passenger and Crew Count ---*/
+      function bindDescription(d){
 
-      })
-      .on("click", function(d){
         desc_container.attr("class","description-container")
           .html("<strong>Location</strong> - " +
             d.Location + "&emsp;&emsp;" +
@@ -239,13 +227,87 @@
 
         d3.selectAll("circle").attr("class","");
         d3.select(this).attr("class","active").moveToFront();
-      })
-      .on("mouseout", function(d){
+
+      }
+
+      /*--- Shows Tooltip With Preview of Data ---*/
+      function showTooltip(d) {
+
+        tip.transition()
+          .duration(200)
+          .style("opacity", .9);
+
+        tip.html(d.Location+" ("+month[d.Date.getMonth()]+" "+d.Date.getDate()+
+          ", "+d.Date.getFullYear()+")<br><br><i>Click for description</i>")
+          .style("left", (d3.event.pageX + 20) + "px")
+          .style("top", (d3.event.pageY - 23) + "px");
+
+      }
+
+      /*--- Hides Tooltip After Mousout ---*/
+      function hideTooltip(d) {
         tip.transition()
           .duration(200)
           .style("opacity", 0);
+      }
+
+      /*--- Filters Points for Search Query ---*/
+      function search() {
+
+        var q = searchBox.node().value;
+        if (q != null) {
+
+          q = q.toLowerCase();
+          svg.selectAll("circle").remove();
+
+          var circles = svg.selectAll("circle").data(data).enter()
+            .append("circle").filter(function (d) {
+              return (d['Location'].toLowerCase().includes(q) || d['Summary'].toLowerCase().includes(q));
+            });
+
+          draw_circles(circles);
+
+        } else {
+
+          var circles = svg.selectAll("circle").data(data).enter().append("circle");
+          draw_circles(circles);
+        }
+      }
+
+      /*--- Intialize Variables ---*/
+
+      var svg = d3.select("svg"),
+        desc_container = d3.select("#description-container")
+        tip = d3.select("body").append("div").attr("class", "d3-tip").style("opacity", 0),
+        month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        circles = svg.selectAll("circle").data(data).enter().append("circle");
+
+      /*--- Plot Points and Bind Interactive Functionality ---*/
+
+      draw_circles(circles);
+
+      searchButton.on("click", function(){
+        searchButton.style("display", "none");
+        filterButton.style("display", "none");
+        searchBox.style("display", "inline").node().focus();
+        closeButton.style("display", "inline");
       });
+
+      closeButton.on("click", function(){
+        searchButton.style("display", "inline");
+        filterButton.style("display", "inline");
+        searchBox.style("display", "none");
+        closeButton.style("display", "none");
+        if (searchBox.node().value!==""){
+          searchBox.node().value = "";
+          search();
+        }
+      });
+
+      searchBox.on('input', search);
       d3.select("#loading-spinner").style("display", "none");
-  }
-</script>
+      
+    }
+  </script>
+</body>
 </html>
