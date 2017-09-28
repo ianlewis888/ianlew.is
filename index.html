@@ -14,37 +14,55 @@
   <meta name="description" content="Ian Lewis">
   <link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
   <link href="/styles/css/styles.css" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/css/kube.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <style>
-
+  @font-face {
+    font-family: "FontAwesome";
+    src: url("styles/fonts/FontAwesome.otf");
+  }
   </style>
-
 </head>
 
 <body>
-  <div class="nav">
-  <ul>
-    <a href="">Ian J. Lewis</a>
-    <li>
-      <a href="">Design</a>
-    </li>
-    <li>
-      <a href="/dev-projects.html">Dev Projects</a>
-    </li>
-    <li>
-      <a href="">Writing</a>
-    </li>
-    <li>
-      <a href="">Resume</a>
-    </li>
-    <li>
-      <a href="">Just For Fun</a>
-    </li>
-  </ul>
-</div>
-  <div class="content">
-    <h1>Hi.</h1>
-    <p>This is where people will learn stuff about me.</p>
+
+  <div id="menu-container">
+    <ul id="navigation">
+      <li>
+        <a href="/">Main</a>
+      </li>
+      <li><a href="/">Resume</a></li>
+      <li><a href="/">Gallery</a></li>
+      <li><a href="/">Blog</a></li>
+    </ul>
   </div>
+
+  <div id="content-container">
+    <h1 class="title" id="heading">IanLew.is</h1>
+    <img id="portrait" src="/images/portrait.png"></img>
+    <div class="row gutters" id="social-container">
+      <div class="col col-4 push-center">
+        <a id="social-link-li" class="social-link" target="_blank" href="https://www.linkedin.com/in/ianlewis748/">
+          <i class="fa fa-2x fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </div>
+      <div class="col col-4 push-center">
+        <a id="social-link-gh" class="social-link" target="_blank" href="https://github.com/ianlewis888">
+          <i class="fa fa-github fa-2x" aria-hidden="true"></i>
+        </a>
+      </div>
+      <div class="col col-4 push-bottom">
+        <a id="social-link-ig" class="social-link" target="_blank" href="https://www.instagram.com/_ianianian/">
+          
+        </a>
+      </div>
+    </div>
+    <p>Hello there — this is my website</p>
+    <blockquote><p>This is a quote</p><small>—Me, the elusive chanteuse</small></blockquote>
+  </div>
+
 </body>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="styles/kube-6.5.2/dist/js/kube.js"></script>
 </html>
