@@ -12,17 +12,22 @@
   transform: scaleX(1);
 }
 
+$main-color: #7F7F7F;
+$resume-color: #477998;
+$projects-color: #AF4B57;
+$thoughts-color: #67A065;
+
 body {
   @include grid-row;
 }
+
 body > * {
   margin-top: 20px;
 }
 
-#heading {
-  margin-bottom: 40px;
-  margin-top: 20px;
-  font-family: "Merriweather";
+img {
+  border-radius: 3px;
+  pointer-events: none;
 }
 
 .social-link {
@@ -38,14 +43,47 @@ body > * {
   @include border-animation-after;
 }
 
+@media screen and (max-width: 768px) {
+    #menu-icon {
+      display: inline !important;
+    }
+    #navigation {
+      display: none;
+    }
+    #menu-container {
+      border-right: none !important;
+      padding-bottom: 10px;
+      border-bottom: solid 2px $main-color;
+    }
+    #navigation > li {
+      transition: opacity 250ms ease-in-out;
+    }
+}
+
+@media screen and (min-width: 769px) {
+  #menu-icon {
+    display: none !important;
+  }
+  #menu-close {
+    display: none !important;
+  }
+  #navigation {
+    display: block !important;
+    opacity: 1 !important;
+  }
+}
+
 #menu-container {
-  @include flex-item-width(300px);
+  @include flex-item-width(250px);
+  margin-top: 25px;
   margin-left: 15px;
+  margin-right: 15px;
+  border-right: solid 2px $main-color;
 }
 
 #content-container {
   @include flex-item-auto;
-  margin-left: 15px;
+  margin-left: 40px;
 }
 
 #navigation > li {
@@ -61,26 +99,68 @@ body > * {
   color: black;
 }
 
+#navigation > li:nth-child(4) {
+  margin-bottom: -10px;
+}
+
+#menu-icon {
+  display: none;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+#menu-close {
+  display: none;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
 #navigation > li > a::after {
   @include border-animation-before;
+}
+
+#navigation > li:nth-child(1) > a:hover {
+  color: $main-color;
+}
+
+#navigation > li:nth-child(2) > a:hover {
+  color: $resume-color;
+}
+
+#navigation > li:nth-child(3) > a:hover {
+  color: $projects-color;
+}
+
+#navigation > li:nth-child(4) > a:hover {
+  color: $thoughts-color;
 }
 
 #navigation > li > a:hover::after {
   @include border-animation-after;
 }
 
+#heading {
+  margin-bottom: 40px;
+  margin-top: 20px;
+  font-family: "Merriweather", serif;
+}
+
 #portrait {
-  max-width: 200px;
-  border-radius: 3px;
-  pointer-events: none;
+  max-width: 225px;
 }
 
 #social-container {
-  max-width: 250px;
+  width: 300px;
   margin-left: 0px;
   margin-bottom: 15px;
   margin-top: 20px;
 }
+
+#social-container > div {
+  display: inline-block;
+  width: 20%;
+}
+
 #social-link-li:hover {
   color: #0077B5;
 }
@@ -89,4 +169,7 @@ body > * {
 }
 #social-link-gh:hover {
   color: #512c7b;
+}
+#social-link-email:hover {
+  color: $main-color;
 }
